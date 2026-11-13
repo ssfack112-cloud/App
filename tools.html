@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Tools & Editors | Sadik Tool's</title>
+    <title>Smart Tools Hub | Sadik Tool's</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Real Working Libraries (jsPDF & pdf-lib) -->
+    <!-- Real Working Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <style>
@@ -27,7 +27,6 @@
         }
         .btn-action:active {
             transform: scale(0.95);
-            box-shadow: 0 0 25px rgba(99, 102, 241, 0.8);
         }
         body {
             background: linear-gradient(135deg, #0f172a, #1e1b4b, #312e81);
@@ -84,7 +83,7 @@
         <!-- 3. IMAGE FORMAT CHANGER & RESIZER -->
         <div id="tool-imgedit" class="tool-section hidden glass-card rounded-3xl p-6 md:p-8 space-y-5">
             <h2 class="text-2xl font-bold text-cyan-300">🖼️ Image Format Changer & Resizer</h2>
-            <p class="text-gray-400 text-sm">ছবির ফরম্যাট (JPG, PNG, WEBP) পরিবর্তন করো এবং প্রস্থ (Width) ঠিক করে ডাউনলোড করো।</p>
+            <p class="text-gray-400 text-sm">ছবির ফরম্যাট (JPG, PNG, WEBP) পরিবর্তন করো এবং ডাউনলোড করো।</p>
             <input type="file" id="imgedit-input" accept="image/*" class="block w-full text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:bg-cyan-600 file:text-white hover:file:bg-cyan-500 cursor-pointer bg-black/30 p-3 rounded-xl border border-white/10">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -97,8 +96,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="text-xs text-gray-400 block mb-1">Resize Width (px) - Optional:</label>
-                    <input type="number" id="img-width" placeholder="যেমন: 800 (খালি রাখলে অরিজিনাল থাকবে)" class="w-full bg-slate-900 border border-white/15 rounded-xl p-3 text-white">
+                    <label class="text-xs text-gray-400 block mb-1">Resize Width (px):</label>
+                    <input type="number" id="img-width" placeholder="যেমন: 800" class="w-full bg-slate-900 border border-white/15 rounded-xl p-3 text-white">
                 </div>
             </div>
             <button onclick="processImage()" class="btn-action w-full py-3.5 rounded-xl font-bold text-white shadow-lg">Convert & Download Image</button>
@@ -107,9 +106,9 @@
         <!-- 4. DOCUMENT & TEXT EDITOR -->
         <div id="tool-docedit" class="tool-section hidden glass-card rounded-3xl p-6 md:p-8 space-y-5">
             <h2 class="text-2xl font-bold text-emerald-300">📝 Live Document Editor</h2>
-            <p class="text-gray-400 text-sm">এখানে তোমার ডকুমেন্ট বা নোট লেখো এবং সরাসরি Word (.doc) বা Text (.txt) ফাইল হিসেবে সেভ করো।</p>
-            <input type="text" id="doc-filename" placeholder="ফাইলের নাম দাও (যেমন: my-document)" class="w-full bg-black/30 border border-white/15 rounded-xl px-4 py-2.5 text-white">
-            <textarea id="doc-content" rows="8" placeholder="এখানে তোমার লেখা শুরু করো..." class="w-full bg-black/30 border border-white/15 rounded-xl p-4 text-white focus:outline-none focus:border-emerald-400"></textarea>
+            <p class="text-gray-400 text-sm">এখানে তোমার নোট বা ডকুমেন্ট লিখে ফাইল হিসেবে সেভ করো।</p>
+            <input type="text" id="doc-filename" placeholder="ফাইলের নাম (যেমন: notes)" class="w-full bg-black/30 border border-white/15 rounded-xl px-4 py-2.5 text-white">
+            <textarea id="doc-content" rows="8" placeholder="এখানে লেখালেখি করো..." class="w-full bg-black/30 border border-white/15 rounded-xl p-4 text-white focus:outline-none focus:border-emerald-400"></textarea>
             <div class="grid grid-cols-2 gap-4">
                 <button onclick="downloadDoc('txt')" class="py-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl font-semibold transition">Save as .TXT</button>
                 <button onclick="downloadDoc('doc')" class="btn-action py-3 rounded-xl font-semibold text-white">Save as Word (.DOC)</button>
@@ -119,111 +118,39 @@
     </main>
 
     <footer class="text-center text-gray-500 text-xs py-4">
-        <p>© 2026 Sadik Tool's • 100% Client-Side Secure Tools</p>
+        <p>© 2026 Sadik Tool's • Fully Functional Web App</p>
     </footer>
 
     <script>
-        // Tab Switcher
         function openTool(toolId) {
             document.querySelectorAll('.tool-section').forEach(el => el.classList.add('hidden'));
             document.getElementById('tool-' + toolId).classList.remove('hidden');
         }
 
-        // 1. Image to PDF Function
         async function convertImagesToPDF() {
             const input = document.getElementById('img2pdf-input');
-            if (!input.files.length) return alert('আগে কমপক্ষে একটি ছবি সিলেক্ট করো!');
-            
+            if (!input.files.length) return alert('আগে ছবি সিলেক্ট করো!');
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF();
-            
             for (let i = 0; i < input.files.length; i++) {
                 const imgData = await readFileAsDataURL(input.files[i]);
                 const img = new Image();
                 img.src = imgData;
                 await new Promise(resolve => img.onload = resolve);
-                
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = (img.height * pageWidth) / img.width;
-                
                 if (i > 0) pdf.addPage();
                 pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
             }
             pdf.save('Sadik-Tools-Converted.pdf');
         }
 
-        // 2. Merge PDF Function
         async function mergePDFs() {
             const input = document.getElementById('pdfmerge-input');
-            if (input.files.length < 2) return alert('জোড়া লাগানোর জন্য কমপক্ষে ২টি PDF ফাইল সিলেক্ট করো!');
-            
+            if (input.files.length < 2) return alert('কমপক্ষে ২টি PDF সিলেক্ট করো!');
             const mergedPdf = await PDFLib.PDFDocument.create();
             for (let file of input.files) {
                 const arrayBuffer = await file.arrayBuffer();
                 const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
-                const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                copiedPages.forEach((page) => mergedPdf.addPage(page));
-            }
-            const mergedPdfBytes = await mergedPdf.save();
-            const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
-            triggerDownload(URL.createObjectURL(blob), 'Sadik-Tools-Merged.pdf');
-        }
-
-        // 3. Image Converter & Resizer Function
-        async function processImage() {
-            const input = document.getElementById('imgedit-input');
-            if (!input.files.length) return alert('আগে একটি ছবি সিলেক্ট করো!');
-            
-            const format = document.getElementById('img-format').value;
-            const customWidth = parseInt(document.getElementById('img-width').value);
-            const imgData = await readFileAsDataURL(input.files[0]);
-            
-            const img = new Image();
-            img.src = imgData;
-            await new Promise(resolve => img.onload = resolve);
-            
-            const canvas = document.createElement('canvas');
-            const targetWidth = customWidth > 0 ? customWidth : img.width;
-            const targetHeight = (img.height * targetWidth) / img.width;
-            
-            canvas.width = targetWidth;
-            canvas.height = targetHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
-            
-            const ext = format.split('/')[1];
-            const convertedUrl = canvas.toDataURL(format, 0.92);
-            triggerDownload(convertedUrl, `Sadik-Tools-Image.${ext}`);
-        }
-
-        // 4. Document Editor Download Function
-        function downloadDoc(type) {
-            const content = document.getElementById('doc-content').value;
-            if (!content.trim()) return alert('আগে ডকুমেন্টে কিছু লেখো!');
-            const filename = document.getElementById('doc-filename').value.trim() || 'Sadik-Document';
-            
-            const mime = type === 'doc' ? 'application/msword' : 'text/plain;charset=utf-8';
-            const blob = new Blob([content], { type: mime });
-            triggerDownload(URL.createObjectURL(blob), `${filename}.${type}`);
-        }
-
-        // Helpers
-        function readFileAsDataURL(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function triggerDownload(url, filename) {
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-    </script>
-</body>
-</html>
+                const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices
+                                                              
