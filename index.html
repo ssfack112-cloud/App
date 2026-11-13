@@ -4,14 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sadik Tool's 🔗</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #02040a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Glowing Follower Ball (Mouse / Touch Tracker) */
+        #bg-glow-ball {
+            position: fixed;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.45) 0%, rgba(147, 51, 234, 0.25) 45%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            filter: blur(45px);
+            left: 50%;
+            top: 50%;
+        }
+
+        /* Liquid Glassmorphism Effect */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(96, 165, 250, 0.5);
+            box-shadow: 0 12px 40px 0 rgba(59, 130, 246, 0.3);
+            transform: translateY(-3px);
+        }
+    </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between p-4 md:p-8">
 
+    <!-- Animated Particle Canvas & Glow Ball -->
+    <canvas id="bg-canvas"></canvas>
+    <div id="bg-glow-ball"></div>
+
     <!-- Header / Navbar -->
-    <header class="glass-card rounded-2xl p-4 mb-8 flex justify-between items-center max-w-6xl mx-auto w-full z-10">
+    <header class="glass-card rounded-2xl p-4 mb-8 flex justify-between items-center max-w-6xl mx-auto w-full relative z-10">
         <div class="flex items-center space-x-3">
             <span class="text-2xl">🚀</span>
             <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Sadik Tool's 🔗</h1>
@@ -19,9 +79,9 @@
     </header>
 
     <!-- Main Content Grid -->
-    <main class="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 z-10">
+    <main class="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 relative z-10">
         
-        <!-- 1. Smart Tools (PDF, Image, etc.) -->
+        <!-- 1. Smart Tools -->
         <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
             <div>
                 <div class="text-3xl mb-3">🛠️</div>
@@ -31,7 +91,7 @@
             <a href="tools.html" class="w-full py-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl font-medium transition duration-200 text-center block">Open Tools</a>
         </div>
 
-        <!-- 2. Video Downloader (TikTok, Insta, YT) -->
+        <!-- 2. Video Downloader -->
         <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
             <div>
                 <div class="text-3xl mb-3">📥</div>
@@ -66,28 +126,75 @@
     </main>
 
     <!-- Footer -->
-    <footer class="text-center text-gray-500 text-xs py-4 z-10">
+    <footer class="text-center text-gray-500 text-xs py-4 relative z-10">
         <p>© 2026 Sadik Tool's. Built with Liquid Glass UI.</p>
     </footer>
 
-    <!-- Background Glow Ball Tracker Script -->
-    <div id="bg-glow-ball"></div>
+    <!-- Interactive Background & Glow Ball Script -->
     <script>
+        // 1. Glow Ball Tracker
         const glowBall = document.getElementById('bg-glow-ball');
         
-        // Mouse move tracking (Desktop)
         window.addEventListener('mousemove', (e) => {
             glowBall.style.left = e.clientX + 'px';
             glowBall.style.top = e.clientY + 'px';
         });
 
-        // Touch move tracking (Mobile / Phone)
         window.addEventListener('touchmove', (e) => {
             if (e.touches.length > 0) {
-                const touch = e.touches[0];
-                glowBall.style.left = touch.clientX + 'px';
-                glowBall.style.top = touch.clientY + 'px';
+                glowBall.style.left = e.touches[0].clientX + 'px';
+                glowBall.style.top = e.touches[0].clientY + 'px';
             }
+        });
+
+        window.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0) {
+                glowBall.style.left = e.touches[0].clientX + 'px';
+                glowBall.style.top = e.touches[0].clientY + 'px';
+            }
+        });
+
+        // 2. Animated Floating Dots (Particles) on Dark Background
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 60;
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2 + 0.5,
+                dx: (Math.random() - 0.5) * 0.6,
+                dy: (Math.random() - 0.5) * 0.6
+            });
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(147, 197, 253, 0.45)';
+            
+            particles.forEach(p => {
+                p.x += p.dx;
+                p.y += p.dy;
+
+                if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         });
     </script>
 
