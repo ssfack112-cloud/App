@@ -31,7 +31,7 @@
             transition: transform 0.05s ease-out;
         }
         .glass-card {
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.65);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             border: 1px solid rgba(255, 255, 255, 0.12);
@@ -41,7 +41,6 @@
         .glass-card:hover {
             border-color: rgba(96, 165, 250, 0.5);
             box-shadow: 0 12px 40px 0 rgba(59, 130, 246, 0.35);
-            transform: translateY(-3px);
         }
         .btn-action {
             background: linear-gradient(135deg, #3b82f6, #6366f1);
@@ -69,21 +68,21 @@
 
         <div class="glass-card rounded-3xl p-6 md:p-8 space-y-6 text-center">
             <div class="text-4xl mb-2">🎬</div>
-            <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-300 to-indigo-300 bg-clip-text text-transparent">Download Any Video</h2>
-            <p class="text-gray-400 text-sm">TikTok, Instagram Reels বা YouTube ভিডিওর লিংক নিচে পেস্ট করো।</p>
+            <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-300 to-indigo-300 bg-clip-text text-transparent">Professional Video Downloader</h2>
+            <p class="text-gray-400 text-sm">TikTok, Instagram Reels, YouTube বা Facebook ভিডিওর লিংক নিচে পেস্ট করো।</p>
             
             <div class="flex flex-col md:flex-row gap-3">
-                <input type="url" id="video-url" placeholder="ভিডিওর লিংক এখানে পেস্ট করো (https://...)" class="flex-1 bg-black/40 border border-white/15 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-400">
-                <button onclick="fetchVideoAPI()" class="btn-action px-6 py-3.5 rounded-xl font-bold text-white shadow-lg">Fetch Video</button>
+                <input type="url" id="video-url" placeholder="এখানে ভিডিওর লিংক দিন (https://...)" class="flex-1 bg-black/40 border border-white/15 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-400">
+                <button onclick="processDownload()" class="btn-action px-6 py-3.5 rounded-xl font-bold text-white shadow-lg">Fetch Video</button>
             </div>
         </div>
 
-        <!-- Result Box -->
-        <div id="result-box" class="glass-card rounded-3xl p-6 hidden space-y-4">
-            <h3 class="text-lg font-semibold text-emerald-400" id="result-title">⏳ প্রসেস হচ্ছে...</h3>
-            <div id="video-info" class="text-sm text-gray-300 space-y-3">
-                <!-- Dynamic Response -->
-            </div>
+        <!-- Result Preview Box -->
+        <div id="result-box" class="glass-card rounded-3xl p-6 hidden space-y-4 text-center">
+            <div class="text-3xl">🚀</div>
+            <h3 class="text-lg font-semibold text-emerald-400">ভিডিও ডাউনলোডের জন্য প্রস্তুত!</h3>
+            <p class="text-xs text-gray-300" id="display-url-text"></p>
+            <a id="direct-dl-btn" href="#" target="_blank" class="block w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl font-bold text-white shadow-lg transition">📥 Download Video Now (HD)</a>
         </div>
 
     </main>
@@ -93,11 +92,11 @@
     </footer>
 
     <script>
-        async function fetchVideoAPI() {
+        function processDownload() {
             const urlInput = document.getElementById('video-url').value.trim();
             const resultBox = document.getElementById('result-box');
-            const videoInfo = document.getElementById('video-info');
-            const resultTitle = document.getElementById('result-title');
+            const displayUrlText = document.getElementById('display-url-text');
+            const directDlBtn = document.getElementById('direct-dl-btn');
 
             if (!urlInput) {
                 alert('দয়া করে প্রথমে একটি ভিডিওর লিংক দিন!');
@@ -105,51 +104,15 @@
             }
 
             resultBox.classList.remove('hidden');
-            resultTitle.innerText = "⏳ ভিডিও ফেচ করা হচ্ছে...";
-            videoInfo.innerHTML = `<p class="text-yellow-400 animate-pulse">সার্ভার থেকে ভিডিও ডেটা সংগ্রহ করা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</p>`;
-
-            try {
-                // Using Cobalt API (A very reliable open-source media converter API endpoint)
-                const response = await fetch('https://api.cobalt.tools/api/json', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        url: urlInput,
-                        vQuality: '720'
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.status === 'redirect' || data.status === 'stream' || data.url) {
-                    const downloadUrl = data.url || data.stream;
-                    resultTitle.innerText = "✅ ভিডিও ডাউনলোড করার জন্য প্রস্তুত!";
-                    videoInfo.innerHTML = `
-                        <p class="text-gray-300 text-xs break-all"><strong>লিংক:</strong> ${urlInput}</p>
-                        <a href="${downloadUrl}" target="_blank" class="block w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-xl text-center font-bold text-white shadow-lg transition">📥 Download Video Now (HD)</a>
-                    `;
-                } else if (data.status === 'picker') {
-                    // Multiple formats available
-                    resultTitle.innerText = "✅ ভিডিও ফরম্যাট পাওয়া গেছে!";
-                    let linksHtml = '';
-                    data.picker.forEach((item, index) => {
-                        linksHtml += `<a href="${item.url}" target="_blank" class="block w-full py-2.5 bg-blue-600/40 hover:bg-blue-600/60 border border-blue-400/30 rounded-xl text-center font-semibold text-white transition mt-2">📥 Download Option ${index + 1} (${item.type || 'Media'})</a>`;
-                    });
-                    videoInfo.innerHTML = linksHtml;
-                } else {
-                    throw new Error('Invalid response');
-                }
-            } catch (error) {
-                // Fallback direct redirection if API rate limit hits
-                resultTitle.innerText = "⚠️ সরাসরি ডাউনলোডের বিকল্প মাধ্যম";
-                videoInfo.innerHTML = `
-                    <p class="text-red-400 text-xs">সরাসরি ফেচ করা সম্ভব হয়নি। নিচের সেফ সার্ভার ব্যবহার করে এক ক্লিকে ডাউনলোড করো:</p>
-                    <a href="${urlInput.includes('tiktok') ? 'https://tikmate.app/' : 'https://en.savefrom.net/'}" target="_blank" class="block w-full py-3 bg-blue-600/30 hover:bg-blue-600/50 border border-blue-400/30 rounded-xl text-center font-semibold transition mt-2">🚀 Open Direct Downloader Server</a>
-                `;
+            displayUrlText.innerText = "লিংক: " + urlInput;
+            
+            // Generate direct safe redirect link to high speed downloader service
+            let targetServiceUrl = `https://en.savefrom.net/#url=${encodeURIComponent(urlInput)}`;
+            if (urlInput.includes('tiktok')) {
+                targetServiceUrl = `https://tikmate.app/en/?url=${encodeURIComponent(urlInput)}`;
             }
+            
+            directDlBtn.href = targetServiceUrl;
         }
 
         // Background Animation Script
