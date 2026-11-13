@@ -6,40 +6,12 @@
     <title>Sadik Tool's 🔗</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Liquid Glassmorphism Effect */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-        .glass-card:hover {
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 12px 40px 0 rgba(59, 130, 246, 0.2);
-            transform: translateY(-3px);
-            transition: all 0.3s ease;
-        }
-        /* Background Gradient Animation */
-        body {
-            background: linear-gradient(135deg, #0f172a, #1e1b4b, #312e81);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="min-h-screen flex flex-col justify-between p-4 md:p-8">
 
     <!-- Header / Navbar -->
-    <header class="glass-card rounded-2xl p-4 mb-8 flex justify-between items-center max-w-6xl mx-auto w-full">
+    <header class="glass-card rounded-2xl p-4 mb-8 flex justify-between items-center max-w-6xl mx-auto w-full z-10">
         <div class="flex items-center space-x-3">
             <span class="text-2xl">🚀</span>
             <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Sadik Tool's 🔗</h1>
@@ -47,7 +19,7 @@
     </header>
 
     <!-- Main Content Grid -->
-    <main class="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+    <main class="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 z-10">
         
         <!-- 1. Smart Tools (PDF, Image, etc.) -->
         <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
@@ -94,30 +66,30 @@
     </main>
 
     <!-- Footer -->
-    <footer class="text-center text-gray-500 text-xs py-4">
+    <footer class="text-center text-gray-500 text-xs py-4 z-10">
         <p>© 2026 Sadik Tool's. Built with Liquid Glass UI.</p>
     </footer>
 
+    <!-- Background Glow Ball Tracker Script -->
+    <div id="bg-glow-ball"></div>
+    <script>
+        const glowBall = document.getElementById('bg-glow-ball');
+        
+        // Mouse move tracking (Desktop)
+        window.addEventListener('mousemove', (e) => {
+            glowBall.style.left = e.clientX + 'px';
+            glowBall.style.top = e.clientY + 'px';
+        });
+
+        // Touch move tracking (Mobile / Phone)
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                const touch = e.touches[0];
+                glowBall.style.left = touch.clientX + 'px';
+                glowBall.style.top = touch.clientY + 'px';
+            }
+        });
+    </script>
+
 </body>
 </html>
-<!-- Background Glow Ball Tracker Script -->
-<div id="bg-glow-ball"></div>
-<script>
-    const glowBall = document.getElementById('bg-glow-ball');
-    
-    // Mouse move tracking (Desktop)
-    window.addEventListener('mousemove', (e) => {
-        glowBall.style.left = e.clientX + 'px';
-        glowBall.style.top = e.clientY + 'px';
-    });
-
-    // Touch move tracking (Mobile / Phone)
-    window.addEventListener('touchmove', (e) => {
-        if (e.touches.length > 0) {
-            const touch = e.touches[0];
-            glowBall.style.left = touch.clientX + 'px';
-            glowBall.style.top = touch.clientY + 'px';
-        }
-    });
-</script>
-
