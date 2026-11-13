@@ -4,24 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Tools & Editors | Sadik Tool's</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Real Working Libraries (jsPDF & pdf-lib) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <style>
-        /* Liquid Glassmorphism Effect */
         .glass-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-        .glass-card:hover {
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 12px 40px 0 rgba(59, 130, 246, 0.2);
-            transform: translateY(-3px);
             transition: all 0.3s ease;
         }
-        /* Background Gradient Animation */
+        .glass-card:hover {
+            border-color: rgba(96, 165, 250, 0.4);
+            box-shadow: 0 12px 40px 0 rgba(59, 130, 246, 0.25);
+        }
+        .btn-action {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            transition: all 0.2s ease;
+        }
+        .btn-action:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.8);
+        }
         body {
             background: linear-gradient(135deg, #0f172a, #1e1b4b, #312e81);
             background-size: 400% 400%;
@@ -38,74 +45,185 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between p-4 md:p-8">
 
-    <!-- Header / Navbar -->
+    <!-- Header -->
     <header class="glass-card rounded-2xl p-4 mb-8 flex justify-between items-center max-w-6xl mx-auto w-full">
         <div class="flex items-center space-x-3">
             <span class="text-2xl">🛠️</span>
-            <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Smart Tools Hub</h1>
+            <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Sadik Smart Tools</h1>
         </div>
         <a href="index.html" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-medium transition active:scale-95">← Back Home</a>
     </header>
 
-    <!-- Main Tools Grid -->
-    <main class="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        
-        <!-- 1. PDF Editor -->
-        <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
-            <div>
-                <div class="text-3xl mb-3">📄</div>
-                <h2 class="text-xl font-semibold mb-2">PDF Editor & Tools</h2>
-                <p class="text-gray-400 text-sm mb-4">Merge, split, compress, and edit your PDF files securely.</p>
-            </div>
-            <button onclick="alert('PDF Editor tool is ready to configure!')" class="w-full py-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl font-medium transition duration-200">Open PDF Tool</button>
+    <!-- Tool Selector Tabs -->
+    <div class="max-w-6xl mx-auto w-full grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <button onclick="openTool('img2pdf')" class="glass-card py-3 px-4 rounded-2xl font-semibold text-sm hover:bg-white/10 active:scale-95 text-center">📄 Image to PDF</button>
+        <button onclick="openTool('pdfmerge')" class="glass-card py-3 px-4 rounded-2xl font-semibold text-sm hover:bg-white/10 active:scale-95 text-center">📑 Merge PDF</button>
+        <button onclick="openTool('imgedit')" class="glass-card py-3 px-4 rounded-2xl font-semibold text-sm hover:bg-white/10 active:scale-95 text-center">🖼️ Image Converter</button>
+        <button onclick="openTool('docedit')" class="glass-card py-3 px-4 rounded-2xl font-semibold text-sm hover:bg-white/10 active:scale-95 text-center">📝 Document Editor</button>
+    </div>
+
+    <!-- Active Workspace Area -->
+    <main class="max-w-4xl mx-auto w-full mb-12">
+
+        <!-- 1. IMAGE TO PDF TOOL -->
+        <div id="tool-img2pdf" class="tool-section glass-card rounded-3xl p-6 md:p-8 space-y-5">
+            <h2 class="text-2xl font-bold text-blue-300">📄 Image to PDF Converter</h2>
+            <p class="text-gray-400 text-sm">এক বা একাধিক ছবি সিলেক্ট করো এবং সাথে সাথে PDF হিসেবে ডাউনলোড করো।</p>
+            <input type="file" id="img2pdf-input" accept="image/*" multiple class="block w-full text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer bg-black/30 p-3 rounded-xl border border-white/10">
+            <button onclick="convertImagesToPDF()" class="btn-action w-full py-3.5 rounded-xl font-bold text-white shadow-lg">Convert & Download PDF</button>
         </div>
 
-        <!-- 2. Image Editor -->
-        <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
-            <div>
-                <div class="text-3xl mb-3">🖼️</div>
-                <h2 class="text-xl font-semibold mb-2">Image Editor</h2>
-                <p class="text-gray-400 text-sm mb-4">Crop, resize, filter, and enhance your photos instantly.</p>
-            </div>
-            <button onclick="alert('Image Editor tool is ready to configure!')" class="w-full py-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl font-medium transition duration-200">Open Image Tool</button>
+        <!-- 2. MERGE PDF TOOL -->
+        <div id="tool-pdfmerge" class="tool-section hidden glass-card rounded-3xl p-6 md:p-8 space-y-5">
+            <h2 class="text-2xl font-bold text-purple-300">📑 Merge Multiple PDFs</h2>
+            <p class="text-gray-400 text-sm">একাধিক PDF ফাইল সিলেক্ট করে একটি মাত্র PDF ফাইলে জোড়া লাগাও।</p>
+            <input type="file" id="pdfmerge-input" accept="application/pdf" multiple class="block w-full text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:bg-purple-600 file:text-white hover:file:bg-purple-500 cursor-pointer bg-black/30 p-3 rounded-xl border border-white/10">
+            <button onclick="mergePDFs()" class="btn-action w-full py-3.5 rounded-xl font-bold text-white shadow-lg">Merge & Download PDF</button>
         </div>
 
-        <!-- 3. Document Editor -->
-        <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
-            <div>
-                <div class="text-3xl mb-3">📝</div>
-                <h2 class="text-xl font-semibold mb-2">Documents Editor</h2>
-                <p class="text-gray-400 text-sm mb-4">Create, view, and edit text or document files easily.</p>
+        <!-- 3. IMAGE FORMAT CHANGER & RESIZER -->
+        <div id="tool-imgedit" class="tool-section hidden glass-card rounded-3xl p-6 md:p-8 space-y-5">
+            <h2 class="text-2xl font-bold text-cyan-300">🖼️ Image Format Changer & Resizer</h2>
+            <p class="text-gray-400 text-sm">ছবির ফরম্যাট (JPG, PNG, WEBP) পরিবর্তন করো এবং প্রস্থ (Width) ঠিক করে ডাউনলোড করো।</p>
+            <input type="file" id="imgedit-input" accept="image/*" class="block w-full text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:bg-cyan-600 file:text-white hover:file:bg-cyan-500 cursor-pointer bg-black/30 p-3 rounded-xl border border-white/10">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Select Output Format:</label>
+                    <select id="img-format" class="w-full bg-slate-900 border border-white/15 rounded-xl p-3 text-white">
+                        <option value="image/jpeg">JPG / JPEG</option>
+                        <option value="image/png">PNG</option>
+                        <option value="image/webp">WEBP</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 block mb-1">Resize Width (px) - Optional:</label>
+                    <input type="number" id="img-width" placeholder="যেমন: 800 (খালি রাখলে অরিজিনাল থাকবে)" class="w-full bg-slate-900 border border-white/15 rounded-xl p-3 text-white">
+                </div>
             </div>
-            <button onclick="alert('Document Editor tool is ready to configure!')" class="w-full py-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl font-medium transition duration-200">Open Doc Tool</button>
+            <button onclick="processImage()" class="btn-action w-full py-3.5 rounded-xl font-bold text-white shadow-lg">Convert & Download Image</button>
         </div>
 
-        <!-- 4. Format Changer -->
-        <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
-            <div>
-                <div class="text-3xl mb-3">🔄</div>
-                <h2 class="text-xl font-semibold mb-2">Format Changer</h2>
-                <p class="text-gray-400 text-sm mb-4">Convert images, documents, and files between different formats.</p>
+        <!-- 4. DOCUMENT & TEXT EDITOR -->
+        <div id="tool-docedit" class="tool-section hidden glass-card rounded-3xl p-6 md:p-8 space-y-5">
+            <h2 class="text-2xl font-bold text-emerald-300">📝 Live Document Editor</h2>
+            <p class="text-gray-400 text-sm">এখানে তোমার ডকুমেন্ট বা নোট লেখো এবং সরাসরি Word (.doc) বা Text (.txt) ফাইল হিসেবে সেভ করো।</p>
+            <input type="text" id="doc-filename" placeholder="ফাইলের নাম দাও (যেমন: my-document)" class="w-full bg-black/30 border border-white/15 rounded-xl px-4 py-2.5 text-white">
+            <textarea id="doc-content" rows="8" placeholder="এখানে তোমার লেখা শুরু করো..." class="w-full bg-black/30 border border-white/15 rounded-xl p-4 text-white focus:outline-none focus:border-emerald-400"></textarea>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="downloadDoc('txt')" class="py-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl font-semibold transition">Save as .TXT</button>
+                <button onclick="downloadDoc('doc')" class="btn-action py-3 rounded-xl font-semibold text-white">Save as Word (.DOC)</button>
             </div>
-            <button onclick="alert('Format Changer tool is ready to configure!')" class="w-full py-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl font-medium transition duration-200">Open Converter</button>
-        </div>
-
-        <!-- 5. File Manager / Edit -->
-        <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
-            <div>
-                <div class="text-3xl mb-3">📁</div>
-                <h2 class="text-xl font-semibold mb-2">File Edit & Manager</h2>
-                <p class="text-gray-400 text-sm mb-4">Manage, rename, and organize your files all in one place.</p>
-            </div>
-            <button onclick="alert('File Manager is ready to configure!')" class="w-full py-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl font-medium transition duration-200">Open File Manager</button>
         </div>
 
     </main>
 
-    <!-- Footer -->
     <footer class="text-center text-gray-500 text-xs py-4">
-        <p>© 2026 Sadik Tool's. Built with Liquid Glass UI.</p>
+        <p>© 2026 Sadik Tool's • 100% Client-Side Secure Tools</p>
     </footer>
 
+    <script>
+        // Tab Switcher
+        function openTool(toolId) {
+            document.querySelectorAll('.tool-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tool-' + toolId).classList.remove('hidden');
+        }
+
+        // 1. Image to PDF Function
+        async function convertImagesToPDF() {
+            const input = document.getElementById('img2pdf-input');
+            if (!input.files.length) return alert('আগে কমপক্ষে একটি ছবি সিলেক্ট করো!');
+            
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            
+            for (let i = 0; i < input.files.length; i++) {
+                const imgData = await readFileAsDataURL(input.files[i]);
+                const img = new Image();
+                img.src = imgData;
+                await new Promise(resolve => img.onload = resolve);
+                
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = (img.height * pageWidth) / img.width;
+                
+                if (i > 0) pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
+            }
+            pdf.save('Sadik-Tools-Converted.pdf');
+        }
+
+        // 2. Merge PDF Function
+        async function mergePDFs() {
+            const input = document.getElementById('pdfmerge-input');
+            if (input.files.length < 2) return alert('জোড়া লাগানোর জন্য কমপক্ষে ২টি PDF ফাইল সিলেক্ট করো!');
+            
+            const mergedPdf = await PDFLib.PDFDocument.create();
+            for (let file of input.files) {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                copiedPages.forEach((page) => mergedPdf.addPage(page));
+            }
+            const mergedPdfBytes = await mergedPdf.save();
+            const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+            triggerDownload(URL.createObjectURL(blob), 'Sadik-Tools-Merged.pdf');
+        }
+
+        // 3. Image Converter & Resizer Function
+        async function processImage() {
+            const input = document.getElementById('imgedit-input');
+            if (!input.files.length) return alert('আগে একটি ছবি সিলেক্ট করো!');
+            
+            const format = document.getElementById('img-format').value;
+            const customWidth = parseInt(document.getElementById('img-width').value);
+            const imgData = await readFileAsDataURL(input.files[0]);
+            
+            const img = new Image();
+            img.src = imgData;
+            await new Promise(resolve => img.onload = resolve);
+            
+            const canvas = document.createElement('canvas');
+            const targetWidth = customWidth > 0 ? customWidth : img.width;
+            const targetHeight = (img.height * targetWidth) / img.width;
+            
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+            
+            const ext = format.split('/')[1];
+            const convertedUrl = canvas.toDataURL(format, 0.92);
+            triggerDownload(convertedUrl, `Sadik-Tools-Image.${ext}`);
+        }
+
+        // 4. Document Editor Download Function
+        function downloadDoc(type) {
+            const content = document.getElementById('doc-content').value;
+            if (!content.trim()) return alert('আগে ডকুমেন্টে কিছু লেখো!');
+            const filename = document.getElementById('doc-filename').value.trim() || 'Sadik-Document';
+            
+            const mime = type === 'doc' ? 'application/msword' : 'text/plain;charset=utf-8';
+            const blob = new Blob([content], { type: mime });
+            triggerDownload(URL.createObjectURL(blob), `${filename}.${type}`);
+        }
+
+        // Helpers
+        function readFileAsDataURL(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function triggerDownload(url, filename) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
 </body>
 </html>
