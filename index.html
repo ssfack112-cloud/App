@@ -67,7 +67,7 @@
         #transition-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(2, 4, 10, 0.9);
+            background: rgba(2, 4, 10, 0.92);
             backdrop-filter: blur(20px);
             z-index: 999;
             display: flex;
@@ -85,8 +85,8 @@
         }
 
         @keyframes bounceZoom {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.2); opacity: 1; }
+            0% { transform: scale(0.4); opacity: 0; }
+            50% { transform: scale(1.25); opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
         }
 
@@ -144,7 +144,7 @@
                     <span class="bg-black/40 border border-white/10 py-1.5 rounded-lg text-center text-xs text-sky-400 font-medium">FB</span>
                 </div>
             </div>
-            <button onclick="openDownloaderWithAnimation()" class="w-full py-3 btn-action bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-95 rounded-xl font-medium transition duration-200 text-center text-white shadow-lg">Open Downloader</button>
+            <button onclick="openDownloaderWithAnimation()" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-95 rounded-xl font-medium transition duration-200 text-center text-white shadow-lg">Open Downloader</button>
         </div>
 
         <!-- 3. Bangladesh Govt Services -->
@@ -183,7 +183,7 @@
             overlay.classList.add('active');
             setTimeout(() => {
                 window.location.href = 'downloader.html';
-            }, 800); // Triggers smooth animation then opens downloader.html
+            }, 800);
         }
 
         const glowBall = document.getElementById('bg-glow-ball');
