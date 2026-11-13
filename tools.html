@@ -9,17 +9,59 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #02040a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Interactive Particle Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Glowing Follower Ball (Mouse / Touch Tracker) */
+        #bg-glow-ball {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, rgba(147, 51, 234, 0.2) 50%, transparent 75%);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            filter: blur(40px);
+            left: -500px;
+            top: -500px;
+            transition: transform 0.05s ease-out;
+        }
+
         .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
             border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
             transition: all 0.3s ease;
         }
         .glass-card:hover {
-            border-color: rgba(96, 165, 250, 0.4);
-            box-shadow: 0 12px 40px 0 rgba(59, 130, 246, 0.25);
+            border-color: rgba(96, 165, 250, 0.5);
+            box-shadow: 0 12px 40px 0 rgba(59, 130, 246, 0.35);
+            transform: translateY(-3px);
         }
         .btn-action {
             background: linear-gradient(135deg, #3b82f6, #6366f1);
@@ -28,24 +70,16 @@
         .btn-action:active {
             transform: scale(0.95);
         }
-        body {
-            background: linear-gradient(135deg, #0f172a, #1e1b4b, #312e81);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between p-4 md:p-8">
 
+    <!-- Animated Particle Canvas & Glow Ball -->
+    <canvas id="bg-canvas"></canvas>
+    <div id="bg-glow-ball"></div>
+
     <!-- Header -->
-    <header class="glass-card rounded-2xl p-4 mb-8 flex justify-between items-center max-w-6xl mx-auto w-full">
+    <header class="glass-card rounded-2xl p-4 mb-8 flex justify-between items-center max-w-6xl mx-auto w-full relative z-10">
         <div class="flex items-center space-x-3">
             <span class="text-2xl">🛠️</span>
             <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Sadik Smart Tools</h1>
@@ -54,7 +88,7 @@
     </header>
 
     <!-- Tool Selector Tabs -->
-    <div class="max-w-6xl mx-auto w-full grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+    <div class="max-w-6xl mx-auto w-full grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 relative z-10">
         <button onclick="openTool('img2pdf')" class="glass-card py-3 px-4 rounded-2xl font-semibold text-sm hover:bg-white/10 active:scale-95 text-center">📄 Image to PDF</button>
         <button onclick="openTool('pdfmerge')" class="glass-card py-3 px-4 rounded-2xl font-semibold text-sm hover:bg-white/10 active:scale-95 text-center">📑 Merge PDF</button>
         <button onclick="openTool('imgedit')" class="glass-card py-3 px-4 rounded-2xl font-semibold text-sm hover:bg-white/10 active:scale-95 text-center">🖼️ Image Converter</button>
@@ -62,7 +96,7 @@
     </div>
 
     <!-- Active Workspace Area -->
-    <main class="max-w-4xl mx-auto w-full mb-12">
+    <main class="max-w-4xl mx-auto w-full mb-12 relative z-10">
 
         <!-- 1. IMAGE TO PDF TOOL -->
         <div id="tool-img2pdf" class="tool-section glass-card rounded-3xl p-6 md:p-8 space-y-5">
@@ -117,10 +151,11 @@
 
     </main>
 
-    <footer class="text-center text-gray-500 text-xs py-4">
+    <footer class="text-center text-gray-500 text-xs py-4 relative z-10">
         <p>© 2026 Sadik Tool's • Fully Functional Web App</p>
     </footer>
 
+    <!-- Interactive Magnetic Particles & Glow Ball Script -->
     <script>
         function openTool(toolId) {
             document.querySelectorAll('.tool-section').forEach(el => el.classList.add('hidden'));
@@ -152,5 +187,156 @@
             for (let file of input.files) {
                 const arrayBuffer = await file.arrayBuffer();
                 const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
-                const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices
-                                                              
+                const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                copiedPages.forEach((page) => mergedPdf.addPage(page));
+            }
+            const mergedPdfBytes = await mergedPdf.save();
+            const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+            triggerDownload(URL.createObjectURL(blob), 'Sadik-Tools-Merged.pdf');
+        }
+
+        async function processImage() {
+            const input = document.getElementById('imgedit-input');
+            if (!input.files.length) return alert('আগে ছবি সিলেক্ট করো!');
+            const format = document.getElementById('img-format').value;
+            const customWidth = parseInt(document.getElementById('img-width').value);
+            const imgData = await readFileAsDataURL(input.files[0]);
+            const img = new Image();
+            img.src = imgData;
+            await new Promise(resolve => img.onload = resolve);
+            const canvas = document.createElement('canvas');
+            const targetWidth = customWidth > 0 ? customWidth : img.width;
+            const targetHeight = (img.height * targetWidth) / img.width;
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+            const ext = format.split('/')[1];
+            const convertedUrl = canvas.toDataURL(format, 0.92);
+            triggerDownload(convertedUrl, `Sadik-Tools-Image.${ext}`);
+        }
+
+        function downloadDoc(type) {
+            const content = document.getElementById('doc-content').value;
+            if (!content.trim()) return alert('কিছু লেখো!');
+            const filename = document.getElementById('doc-filename').value.trim() || 'Sadik-Document';
+            const mime = type === 'doc' ? 'application/msword' : 'text/plain;charset=utf-8';
+            const blob = new Blob([content], { type: mime });
+            triggerDownload(URL.createObjectURL(blob), `${filename}.${type}`);
+        }
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function triggerDownload(url, filename) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Background Animation Script
+        const glowBall = document.getElementById('bg-glow-ball');
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        let pointer = { x: window.innerWidth / 2, y: window.innerHeight / 2, radius: 200 };
+
+        function updatePointer(x, y) {
+            pointer.x = x;
+            pointer.y = y;
+            if (glowBall) {
+                glowBall.style.left = x + 'px';
+                glowBall.style.top = y + 'px';
+            }
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            updatePointer(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                updatePointer(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0) {
+                updatePointer(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        const particles = [];
+        const particleCount = 140;
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2.8 + 1,
+                vx: (Math.random() - 0.5) * 0.9,
+                vy: (Math.random() - 0.5) * 0.9,
+                color: Math.random() > 0.4 ? 'rgba(96, 165, 250, 0.8)' : 'rgba(167, 139, 250, 0.8)'
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                let dx = pointer.x - p.x;
+                let dy = pointer.y - p.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < pointer.radius) {
+                    let force = (pointer.radius - distance) / pointer.radius;
+                    p.x += (dx / distance) * force * 4;
+                    p.y += (dy / distance) * force * 4;
+
+                    ctx.beginPath();
+                    ctx.strokeStyle = `rgba(96, 165, 250, ${force * 0.4})`;
+                    ctx.lineWidth = 0.9;
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(pointer.x, pointer.y);
+                    ctx.stroke();
+                }
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#60a5fa';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
