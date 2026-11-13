@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All-In-One Hub | Ultimate Web App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Liquid Glassmorphism Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glass-card:hover {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 40px 0 rgba(59, 130, 246, 0.2);
+            transform: translateY(-3px);
+            transition: all 0.3s ease;
+        }
+        /* Background Gradient Animation */
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e1b4b, #312e81);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-4 md:p-8">
+
+    <!-- Header / Navbar -->
+    <header class="glass-card rounded-2xl p-4 mb-8 flex justify-between items-center max-w-6xl mx-auto w-full">
+        <div class="flex items-center space-x-3">
+            <span class="text-2xl">🚀</span>
+            <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Nexus Hub</h1>
+        </div>
+        <div class="flex space-x-3">
+            <a href="#topup" class="px-4 py-2 bg-blue-600/50 hover:bg-blue-500 rounded-xl text-sm font-medium transition active:scale-95">💎 Top-Up</a>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        
+        <!-- 1. Smart Tools (PDF, Image, etc.) -->
+        <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
+            <div>
+                <div class="text-3xl mb-3">🛠️</div>
+                <h2 class="text-xl font-semibold mb-2">Smart Tools & Editors</h2>
+                <p class="text-gray-400 text-sm mb-4">PDF editor, image processor, format changers, and file management tools.</p>
+            </div>
+            <button onclick="alert('Tools section coming soon!')" class="w-full py-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl font-medium transition duration-200">Open Tools</button>
+        </div>
+
+        <!-- 2. Video Downloader (TikTok, Insta, YT) -->
+        <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
+            <div>
+                <div class="text-3xl mb-3">📥</div>
+                <h2 class="text-xl font-semibold mb-2">Social Video Downloader</h2>
+                <p class="text-gray-400 text-sm mb-4">Download videos from YouTube, TikTok, Instagram & more seamlessly.</p>
+            </div>
+            <button onclick="alert('Video Downloader section coming soon!')" class="w-full py-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl font-medium transition duration-200">Open Downloader</button>
+        </div>
+
+        <!-- 3. Bangladesh Govt Services -->
+        <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
+            <div>
+                <div class="text-3xl mb-3">🇧🇩</div>
+                <h2 class="text-xl font-semibold mb-2">Govt. Service Links</h2>
+                <p class="text-gray-400 text-sm mb-4">Quick links to official Bangladesh government portals and services.</p>
+            </div>
+            <button onclick="alert('Govt Links section coming soon!')" class="w-full py-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl font-medium transition duration-200">View Links</button>
+        </div>
+
+        <!-- 4. Top-Up Portal -->
+        <div id="topup" class="glass-card rounded-3xl p-6 flex flex-col justify-between lg:col-span-3 bg-gradient-to-r from-blue-900/20 to-purple-900/20">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="text-3xl mb-3">💎</div>
+                    <h2 class="text-xl font-semibold mb-2">My Exclusive Top-Up Portal</h2>
+                    <p class="text-gray-400 text-sm">Fast, secure and automated gaming & digital top-up services.</p>
+                </div>
+                <button onclick="alert('Redirecting to your Top-Up website...')" class="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 active:scale-95 rounded-xl font-medium transition duration-200 shadow-lg">Visit Top-Up</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 text-xs py-4">
+        <p>© 2026 Nexus Hub. Built with Liquid Glass UI.</p>
+    </footer>
+
+</body>
+</html>
