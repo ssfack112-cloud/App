@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Video Downloader | Nexus Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="flex flex-col justify-between p-4 md:p-8">
+
+    <!-- Top Navbar -->
+    <header class="glass-panel rounded-2xl p-4 mb-10 max-w-4xl mx-auto w-full flex justify-between items-center">
+        <a href="index.html" class="btn-glass px-4 py-2 rounded-xl text-sm font-medium">← Back to Home</a>
+        <h1 class="text-lg md:text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">📥 Social Downloader</h1>
+    </header>
+
+    <!-- Main Downloader Section -->
+    <main class="max-w-4xl mx-auto w-full space-y-6 mb-12">
+        
+        <!-- Platform Selector Tabs -->
+        <div class="grid grid-cols-3 gap-3">
+            <button onclick="switchTab('youtube')" id="btn-youtube" class="btn-glass py-3 rounded-2xl font-bold text-center border-red-500/40 text-red-300">▶️ YouTube</button>
+            <button onclick="switchTab('tiktok')" id="btn-tiktok" class="btn-glass py-3 rounded-2xl font-bold text-center border-cyan-500/40 text-cyan-300">🎵 TikTok</button>
+            <button onclick="switchTab('instagram')" id="btn-instagram" class="btn-glass py-3 rounded-2xl font-bold text-center border-pink-500/40 text-pink-300">📸 Instagram</button>
+        </div>
+
+        <!-- Download Input Box Card -->
+        <div class="glass-panel rounded-3xl p-6 md:p-8 space-y-6">
+            <div id="tab-title" class="text-xl font-bold">YouTube Video Downloader</div>
+            <p class="text-gray-400 text-sm">যেকোনো ভিডিওর লিংক নিচে পেস্ট করে ডাউনলোড বাটনে ক্লিক করো।</p>
+            
+            <div class="flex flex-col md:flex-row gap-3">
+                <input type="text" id="video-url" placeholder="এখানে ভিডিওর লিংক পেস্ট করুন (Paste URL)..." class="flex-1 bg-black/30 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 transition">
+                <button onclick="handleDownload()" class="btn-glow px-8 py-3 rounded-xl font-bold text-white">Download Now</button>
+            </div>
+
+            <!-- Result Box (Hidden by default) -->
+            <div id="result-box" class="hidden p-4 rounded-2xl bg-white/5 border border-white/10 text-sm text-gray-300 space-y-2">
+                <p class="text-green-400 font-semibold">✅ Link processed successfully!</p>
+                <p>ডাউনলোড শুরু করতে নিচের লিঙ্কে ক্লিক করুন:</p>
+                <a href="#" id="download-link" target="_blank" class="text-blue-400 underline block">Download Video (HD)</a>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center text-gray-500 text-xs py-4">
+        <p>© 2026 Nexus Super Hub</p>
+    </footer>
+
+    <script>
+        function switchTab(platform) {
+            const title = document.getElementById('tab-title');
+            if(platform === 'youtube') title.innerText = "YouTube Video Downloader";
+            if(platform === 'tiktok') title.innerText = "TikTok Video Downloader (No Watermark)";
+            if(platform === 'instagram') title.innerText = "Instagram Reels & Photo Downloader";
+        }
+        function handleDownload() {
+            const url = document.getElementById('video-url').value;
+            if(!url) {
+                alert('দয়া করে আগে একটি লিংক পেস্ট করুন!');
+                return;
+            }
+            document.getElementById('result-box').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
