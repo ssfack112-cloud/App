@@ -62,6 +62,37 @@
             box-shadow: 0 12px 40px 0 rgba(59, 130, 246, 0.35);
             transform: translateY(-3px);
         }
+
+        /* Transition Overlay Animation */
+        #transition-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 4, 10, 0.9);
+            backdrop-filter: blur(20px);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        #transition-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @keyframes bounceZoom {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .animate-zoom-icon {
+            animation: bounceZoom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between p-4 md:p-8">
@@ -69,6 +100,13 @@
     <!-- Animated Particle Canvas & Glow Ball -->
     <canvas id="bg-canvas"></canvas>
     <div id="bg-glow-ball"></div>
+
+    <!-- Smooth Transition Loading Animation Overlay -->
+    <div id="transition-overlay">
+        <div class="text-6xl mb-4 animate-zoom-icon">📥🎬</div>
+        <h2 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent animate-pulse">Opening Downloader Hub...</h2>
+        <p class="text-gray-400 text-sm mt-2">Connecting Social Servers 🚀</p>
+    </div>
 
     <!-- Header / Navbar -->
     <header class="glass-card rounded-2xl p-4 mb-8 flex justify-between items-center max-w-6xl mx-auto w-full relative z-10">
@@ -91,14 +129,22 @@
             <a href="tools.html" class="w-full py-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl font-medium transition duration-200 text-center block">Open Tools</a>
         </div>
 
-        <!-- 2. Video Downloader -->
+        <!-- 2. Video Downloader with Animated Transition & Social Buttons -->
         <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
             <div>
                 <div class="text-3xl mb-3">📥</div>
                 <h2 class="text-xl font-semibold mb-2">Social Video Downloader</h2>
-                <p class="text-gray-400 text-sm mb-4">Download videos from YouTube, TikTok, Instagram & more seamlessly.</p>
+                <p class="text-gray-400 text-sm mb-3">Download videos from YouTube, TikTok, Instagram & more seamlessly.</p>
+                
+                <!-- Social App Buttons Inside Card -->
+                <div class="grid grid-cols-4 gap-2 mb-4">
+                    <span class="bg-black/40 border border-white/10 py-1.5 rounded-lg text-center text-xs text-blue-400 font-medium">TikTok</span>
+                    <span class="bg-black/40 border border-white/10 py-1.5 rounded-lg text-center text-xs text-pink-400 font-medium">Insta</span>
+                    <span class="bg-black/40 border border-white/10 py-1.5 rounded-lg text-center text-xs text-red-400 font-medium">YouTube</span>
+                    <span class="bg-black/40 border border-white/10 py-1.5 rounded-lg text-center text-xs text-sky-400 font-medium">FB</span>
+                </div>
             </div>
-            <button onclick="alert('Video Downloader section coming soon!')" class="w-full py-3 bg-white/10 hover:bg-white/20 active:scale-95 rounded-xl font-medium transition duration-200">Open Downloader</button>
+            <button onclick="openDownloaderWithAnimation()" class="w-full py-3 btn-action bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-95 rounded-xl font-medium transition duration-200 text-center text-white shadow-lg">Open Downloader</button>
         </div>
 
         <!-- 3. Bangladesh Govt Services -->
@@ -127,11 +173,19 @@
 
     <!-- Footer -->
     <footer class="text-center text-gray-500 text-xs py-4 relative z-10">
-        <p> copyright by sadik.</p>
+        <p>© 2026 Sadik Tool's. Built with Liquid Glass UI.</p>
     </footer>
 
-    <!-- Interactive Magnetic Particles & Glow Ball Script -->
+    <!-- Interactive Magnetic Particles, Glow Ball & Animation Script -->
     <script>
+        function openDownloaderWithAnimation() {
+            const overlay = document.getElementById('transition-overlay');
+            overlay.classList.add('active');
+            setTimeout(() => {
+                window.location.href = 'downloader.html';
+            }, 800); // Triggers smooth animation then opens downloader.html
+        }
+
         const glowBall = document.getElementById('bg-glow-ball');
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
@@ -148,8 +202,10 @@
         function updatePointer(x, y) {
             pointer.x = x;
             pointer.y = y;
-            glowBall.style.left = x + 'px';
-            glowBall.style.top = y + 'px';
+            if (glowBall) {
+                glowBall.style.left = x + 'px';
+                glowBall.style.top = y + 'px';
+            }
         }
 
         window.addEventListener('mousemove', (e) => {
@@ -168,7 +224,6 @@
             }
         }, { passive: true });
 
-        // Particles Initialization
         const particles = [];
         const particleCount = 140;
 
@@ -195,26 +250,23 @@
                 if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
                 if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
-                // Magnetic Attraction to Pointer
                 let dx = pointer.x - p.x;
                 let dy = pointer.y - p.y;
                 let distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance < pointer.radius) {
-                    let force = (pointer.radius - distance) / pointer.radius;
-                    p.x += (dx / distance) * force * 4;
-                    p.y += (dy / distance) * force * 4;
+                    let cacheForce = (pointer.radius - distance) / pointer.radius;
+                    p.x += (dx / distance) * cacheForce * 4;
+                    p.y += (dy / distance) * cacheForce * 4;
 
-                    // Connecting Line
                     ctx.beginPath();
-                    ctx.strokeStyle = `rgba(96, 165, 250, ${force * 0.4})`;
+                    ctx.strokeStyle = `rgba(96, 165, 250, ${cacheForce * 0.4})`;
                     ctx.lineWidth = 0.9;
                     ctx.moveTo(p.x, p.y);
                     ctx.lineTo(pointer.x, pointer.y);
                     ctx.stroke();
                 }
 
-                // Draw Particle
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
                 ctx.fillStyle = p.color;
@@ -229,6 +281,5 @@
 
         animate();
     </script>
-
 </body>
 </html>
